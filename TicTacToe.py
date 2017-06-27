@@ -15,12 +15,13 @@ won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], 
             [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
 stone = None
 player = 'X'
-nine_round = 0
+number_of_rounds = 0
 choose_stone = 1
 playerx = 0
 playero = 0
 tie = 0
 c = 0
+aimove = 0
 list_active = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 center = None
 side = None
@@ -55,7 +56,7 @@ def end_game(stone):
             sys.exit()
         else:
             print('Choose Y, N or Q!')
-    return stone, list_num 
+    return stone, list_num
 def change_player(stone):
     if stone == 'X':
         stone = 'O'
@@ -92,14 +93,14 @@ def won(x, y, z,):
             else:
                 print('Choose Y, N or Q!')
     return '!'
-def create_board(x):
+def create_board():
     x = 0
     print('  ' + str(list_num[0]) + ' | ' + str(list_num[1]) + ' | ' + str(list_num[2]) + '  ')
     print('-------------')
     print('  ' + str(list_num[3]) + ' | ' + str(list_num[4]) + ' | ' + str(list_num[5]) + '  ')
     print('-------------')
     print('  ' + str(list_num[6]) + ' | ' + str(list_num[7]) + ' | ' + str(list_num[8]) + '  ')
-def player_turn():
+def player_turn(stone):
     while True:
         try:
             step = int(input('Choose a place 1-9: '))
@@ -120,7 +121,7 @@ def player_turn():
                 break
         except (ValueError, TypeError, IndexError):
             print ("Please enter a valid number")
-    return 
+    return
 def win_move(x, y, z):
     try:
         if stone == x and stone == y:
@@ -187,7 +188,7 @@ def center_move(x):
         x = 4
         return x # AI
 def AI_move(x):
-    
+
     for i in range(len(won_list)):
         """
         won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
@@ -220,7 +221,7 @@ def AI_move(x):
         else:
             x = side_move(x)
             if x != '':
-                return x # AI move against player
+                return x
 
 def choose_stone():
     start = input("Please choose the starter player(0 = O, 1 = X): ")
@@ -244,7 +245,7 @@ def game_mode():
     num_players = input("Please choose game mode(1, 2): ")
     while True:
         if num_players == '1':
-            one_player_mode()
+            one_player_mode(stone, number_of_rounds, aimove, won_list)
             break
         if num_players == "2":
             two_player_mode()
@@ -252,15 +253,15 @@ def game_mode():
         else:
             num_players = input("Please choose 1 or 2: ")
 
-def one_player_mode():
+def one_player_mode(stone, number_of_rounds, aimove, won_list):
     while True: #nine_round <= len(list_num):
         os.system('clear')
         print_score()
-        create_board('')
-        
-        player_turn()
+        create_board()
+
+        player_turn(stone)
         stone = change_player(stone)
-        nine_round(nine_round)
+        nine_round(number_of_rounds)
         aimove = AI_move(aimove)
         list_num[aimove] = stone
         """
@@ -273,24 +274,26 @@ def one_player_mode():
             x = won(won_list[i][0], won_list[i][1], won_list[i][2])
             if x == '?':
                 break
-        nine_round(nine_round)
+        nine_round(number_of_rounds)
         stone=change_player(stone)
 
 def two_player_mode():
-    pass    
+    pass
 
-def nine_round(nine_round):
-    nine_round+=1
-    if nine_round == 9:
+def nine_round(number_of_rounds):
+    number_of_rounds+=1
+    if number_of_rounds == 9:
         end_game(stone)
-    return nine_round
+    return number_of_rounds
 
 while True: # game
     stone = choose_stone()
+    print(stone)
+    print(type(number_of_rounds))
     game_mode()
 
     try:
-            
+
         if num_players ==2: #2 játékos program
             #print("2playermod")
             while True: # nine_round <= len(list_num):
@@ -310,7 +313,7 @@ while True: # game
                         else:
                             c += 1
                     except (ValueError, TypeError, IndexError):
-                        print ("Please enter a valid number")            
+                        print ("Please enter a valid number")
                 c = 0
                 list_num[place] = stone
                 """
