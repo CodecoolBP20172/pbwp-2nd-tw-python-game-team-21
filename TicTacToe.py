@@ -2,26 +2,31 @@ import sys
 import os
 import random
 #global list_num
-list_num = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-#global a
-player = 'X'
 #global nine_round
-nine_round = 0
-valaszt = 1
-#global player1
-playerx = 0
+# #global player1
+#global a
 #global player2
-playero = 0
 #global tie
+#global list_active
+list_num = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
+            [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
+            [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
+            [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+stone = None
+player = 'X'
+nine_round = 0
+choose_stone = 1
+playerx = 0
+playero = 0
 tie = 0
 c = 0
-#global list_active
 list_active = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 center = None
 side = None
 corner = None
 aimove = ''
-def end_game(a):
+def end_game(stone):
     os.system("clear")
     print('It is a tie')
     create_board('It is a tie')
@@ -36,10 +41,10 @@ def end_game(a):
             list_num = [1,2,3,4,5,6,7,8,9]
             global list_active
             list_active = [1,2,3,4,5,6,7,8,9]
-            if a == 'X':
-                a = 'O'
+            if stone == 'X':
+                stone = 'O'
             else:
-                a = 'X'
+                stone = 'X'
             os.system('clear')
             print('New game')
             create_board ("New Game")
@@ -50,23 +55,23 @@ def end_game(a):
             sys.exit()
         else:
             print('Choose Y, N or Q!')
-    return a, list_num # Tie
-def change_player(a):
-    if a == 'X':
-        a = 'O'
+    return stone, list_num 
+def change_player(stone):
+    if stone == 'X':
+        stone = 'O'
     else:
-        a = 'X'
-    return a # stone change
+        stone = 'X'
+    return stone
 def won(x, y, z,):
     if x == z and x == y:
         os.system("clear")
-        global a
-        print('Player '+a+' won!')
+        global stone
+        print('Player '+stone+' won!')
         create_board('Player won!')
-        if a == 'X':
+        if stone == 'X':
             global playerx
             playerx += 1
-        elif a == 'O':
+        elif stone == 'O':
             global playero
             playero += 1
         while True:
@@ -79,12 +84,6 @@ def won(x, y, z,):
                 list_num = [1,2,3,4,5,6,7,8,9]
                 global list_active
                 list_active = [1,2,3,4,5,6,7,8,9]
-                #if a == 'X':
-                 #   a = 'O'
-                #else:
-                 #   a = 'X'
-                #print('New game')
-                #create_board ("New Game")
                 return '?'
             elif rematch == 'N' or rematch == 'n':
                 os.execl(sys.executable, sys.executable, *sys.argv)
@@ -100,9 +99,8 @@ def create_board(x):
     print('  ' + str(list_num[3]) + ' | ' + str(list_num[4]) + ' | ' + str(list_num[5]) + '  ')
     print('-------------')
     print('  ' + str(list_num[6]) + ' | ' + str(list_num[7]) + ' | ' + str(list_num[8]) + '  ')
-def player_turn(a):
-    b = 0
-    while b == 0:
+def player_turn():
+    while True:
         try:
             step = int(input('Choose a place 1-9: '))
             list_active.remove(step)
@@ -110,31 +108,33 @@ def player_turn(a):
             if list_num[place] == 'X' or list_num[place] =='O':
                 print('Pick a free number')
             else:
-                list_num[place] = a
+                list_num[place] = stone
+                """
                 won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
                     [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
                     [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
                     [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+                    """
                 for i in range(len(won_list)):
                     won(won_list[i][0], won_list[i][1], won_list[i][2])
-                b += 1
+                break
         except (ValueError, TypeError, IndexError):
             print ("Please enter a valid number")
-    return #player move against AI
+    return 
 def win_move(x, y, z):
     try:
-        if a == x and a == y:
+        if stone == x and stone == y:
             return z-1
-        elif a == x and a == z:
+        elif stone == x and stone == z:
             return y-1
-        elif a == y and a == z:
+        elif stone == y and stone == z:
             return x-1
         else:
             return '*'
     except (ValueError, TypeError):
         return '*' # AI
 def def_move(x, y, z):
-    if a == 'O':
+    if stone == 'O':
         try:
             if 'X' == x and 'X' == y:
                 return z-1
@@ -187,23 +187,26 @@ def center_move(x):
         x = 4
         return x # AI
 def AI_move(x):
-    won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
-            [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
-            [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
-            [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+    
     for i in range(len(won_list)):
+        """
         won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
         [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
         [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
         [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+        """
+
         x = win_move(won_list[i][0], won_list[i][1], won_list[i][2])
         if x != '*':
             return x
     for a in range(len(won_list)):
+        """
         won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
         [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
         [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
         [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+        """
+
         x = def_move(won_list[a][0], won_list[a][1], won_list[a][2])
         if x != '/':
             return x
@@ -219,48 +222,76 @@ def AI_move(x):
             if x != '':
                 return x # AI move against player
 
-                
-while valaszt == 1: # choose stone
-    valaszt = 1
+def choose_stone():
     start = input("Please choose the starter player(0 = O, 1 = X): ")
-    if start == '1':
-        a = 'X'
-        valaszt = 0
-    elif start == '0':
-        a = 'O'
-        valaszt = 0
-    else:
-        print("Please choose 1 or 0!") #kezdő ikon választása
+    while True: # choose stone
+        if start == '1':
+            stone = 'X'
+            break
+        elif start == '0':
+            stone = 'O'
+            break
+        else:
+            start = input("Please choose 1 or 0!: ")
+    return stone
+
+def print_score():
+    print("Player X: "+str(playerx), end =' ')
+    print("Tie: "+str(tie), end =' ')
+    print("Player O: "+str(playero))
+
+def game_mode():
+    num_players = input("Please choose game mode(1, 2): ")
+    while True:
+        if num_players == '1':
+            one_player_mode()
+            break
+        if num_players == "2":
+            two_player_mode()
+            break
+        else:
+            num_players = input("Please choose 1 or 2: ")
+
+def one_player_mode():
+    while True: #nine_round <= len(list_num):
+        os.system('clear')
+        print_score()
+        create_board('')
+        
+        player_turn()
+        stone = change_player(stone)
+        nine_round(nine_round)
+        aimove = AI_move(aimove)
+        list_num[aimove] = stone
+        """
+        won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
+            [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
+            [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
+            [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+            """
+        for i in range(len(won_list)):
+            x = won(won_list[i][0], won_list[i][1], won_list[i][2])
+            if x == '?':
+                break
+        nine_round(nine_round)
+        stone=change_player(stone)
+
+def two_player_mode():
+    pass    
+
+def nine_round(nine_round):
+    nine_round+=1
+    if nine_round == 9:
+        end_game(stone)
+    return nine_round
+
 while True: # game
+    stone = choose_stone()
+    game_mode()
+
     try:
-        num_players = int(input("Please choose game mode(1, 2): "))
-        if num_players == 1: # egy játékos program
-            while True: #nine_round <= len(list_num):
-                os.system('clear')
-                print("Player X: "+str(playerx), end =' ')
-                print("Tie: "+str(tie), end =' ')
-                print("Player O: "+str(playero))
-                create_board('')
-                player_turn(a)
-                nine_round += 1
-                a=change_player(a)
-                if nine_round == len(list_num):
-                    end_game(a)
-                aimove = AI_move(aimove)
-                list_num[aimove] = a
-                won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
-                    [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
-                    [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
-                    [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
-                for i in range(len(won_list)):
-                    x = won(won_list[i][0], won_list[i][1], won_list[i][2])
-                    if x == '?':
-                        break
-                nine_round += 1
-                if nine_round == len(list_num):
-                    end_game(a)
-                a=change_player(a)
-        elif num_players ==2: #2 játékos program
+            
+        if num_players ==2: #2 játékos program
             #print("2playermod")
             while True: # nine_round <= len(list_num):
                 os.system("clear")
@@ -269,7 +300,7 @@ while True: # game
                 print("Player O: "+str(playero))
                 create_board('')
                 if nine_round <= len(list_num):
-                    print(a+" is next!")
+                    print(stone+" is next!")
                 while c == 0:
                     try:
                         step = int(input('Choose a place 1-9: '))
@@ -281,19 +312,21 @@ while True: # game
                     except (ValueError, TypeError, IndexError):
                         print ("Please enter a valid number")            
                 c = 0
-                list_num[place] = a
+                list_num[place] = stone
+                """
                 won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
                             [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
                             [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
                             [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
+                            """
                 for i in range(len(won_list)):
                     x = won(won_list[i][0], won_list[i][1], won_list[i][2])
                     if x == '?':
                         break
                 nine_round += 1
-                a = change_player(a)
+                stone = change_player(stone)
                 if nine_round >= len(list_num):
-                    end_game(a)
+                    end_game(stone)
         elif num_players not in [1,2]:
             print("Pick number 1 or number 2!")
     except(TypeError, ValueError):
