@@ -26,18 +26,17 @@ list_active = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 center = None
 side = None
 corner = None
-aimove = ''
 def end_game(stone):
     os.system("clear")
     print('It is a tie')
-    create_board('It is a tie')
+    create_board()
     global tie
     tie+=1
     while True:
         rematch = input ('Rematch? Y - Rematch, N - Back to menu, Q - Quit')
         if rematch == 'Y' or rematch=='y':
-            global nine_round
-            nine_round = 0
+            #global nine_round
+            #nine_round = 0
             global list_num
             list_num = [1,2,3,4,5,6,7,8,9]
             global list_active
@@ -63,36 +62,37 @@ def change_player(stone):
     else:
         stone = 'X'
     return stone
-def won(x, y, z,):
-    if x == z and x == y:
-        os.system("clear")
-        global stone
-        print('Player '+stone+' won!')
-        create_board('Player won!')
-        if stone == 'X':
-            global playerx
-            playerx += 1
-        elif stone == 'O':
-            global playero
-            playero += 1
-        while True:
-            rematch = input ('Rematch? Y - Rematch, N - Back to menu, Q - Quit: ')
-            if rematch == 'Y' or rematch=='y':
-                os.system('clear')
-                global nine_round
-                nine_round = -1
-                global list_num
-                list_num = [1,2,3,4,5,6,7,8,9]
-                global list_active
-                list_active = [1,2,3,4,5,6,7,8,9]
-                return '?'
-            elif rematch == 'N' or rematch == 'n':
-                os.execl(sys.executable, sys.executable, *sys.argv)
-            elif rematch == 'q' or rematch == 'Q':
-                sys.exit()
-            else:
-                print('Choose Y, N or Q!')
-    return '!'
+def won():
+    os.system("clear")
+    global stone
+    print('Player '+stone+' won!')
+    create_board()
+    if stone == 'X':
+        global playerx
+        playerx += 1
+    elif stone == 'O':
+        global playero
+        playero += 1
+    while True:
+        rematch = input ('Rematch? Y - Rematch, N - Back to menu, Q - Quit: ')
+        if rematch == 'Y' or rematch=='y':
+            os.system('clear')
+            list_num = [1,2,3,4,5,6,7,8,9]
+            one_player_mode(stone, number_of_rounds, aimove, list_num)
+            #global nine_round
+            #nine_round = -1
+            #global list_num
+            list_num = [1,2,3,4,5,6,7,8,9]
+            #global list_active
+            #list_active = [1,2,3,4,5,6,7,8,9]
+            return '?'
+        elif rematch == 'N' or rematch == 'n':
+            os.execl(sys.executable, sys.executable, *sys.argv)
+        elif rematch == 'q' or rematch == 'Q':
+            sys.exit()
+        else:
+            print('Choose Y, N or Q!')
+    return 
 def create_board():
     x = 0
     print('  ' + str(list_num[0]) + ' | ' + str(list_num[1]) + ' | ' + str(list_num[2]) + '  ')
@@ -186,7 +186,7 @@ def center_move(x):
         return ''
     else:
         x = 4
-        return x # AI
+        return x
 def AI_move(x):
 
     for i in range(len(won_list)):
@@ -209,6 +209,7 @@ def AI_move(x):
         """
 
         x = def_move(won_list[a][0], won_list[a][1], won_list[a][2])
+
         if x != '/':
             return x
     x = center_move(x)
@@ -222,7 +223,7 @@ def AI_move(x):
             x = side_move(x)
             if x != '':
                 return x
-
+        
 def choose_stone():
     start = input("Please choose the starter player(0 = O, 1 = X): ")
     while True: # choose stone
@@ -245,23 +246,37 @@ def game_mode():
     num_players = input("Please choose game mode(1, 2): ")
     while True:
         if num_players == '1':
-            one_player_mode(stone, number_of_rounds, aimove, won_list)
+            one_player_mode(stone, number_of_rounds, aimove, list_num)
             break
         if num_players == "2":
             two_player_mode()
             break
         else:
             num_players = input("Please choose 1 or 2: ")
+def won_check():
+    won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
+        [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
+        [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
+        [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
 
-def one_player_mode(stone, number_of_rounds, aimove, won_list):
-    while True: #nine_round <= len(list_num):
+    for i in range(len(won_list)):
+        if won_list[i][0]==won_list[i][1]and won_list[i][0]==won_list[i][2]:
+            won()
+
+def reset_game(list_num):
+    list_num = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    return list_num
+
+def one_player_mode(stone, number_of_rounds, aimove, list_num):
+    list_num = reset_game(list_num)
+    while True:
         os.system('clear')
         print_score()
         create_board()
-
         player_turn(stone)
+        won_check()
         stone = change_player(stone)
-        nine_round(number_of_rounds)
+        number_of_rounds = nine_round(number_of_rounds)
         aimove = AI_move(aimove)
         list_num[aimove] = stone
         """
@@ -274,6 +289,7 @@ def one_player_mode(stone, number_of_rounds, aimove, won_list):
             x = won(won_list[i][0], won_list[i][1], won_list[i][2])
             if x == '?':
                 break
+        
         nine_round(number_of_rounds)
         stone=change_player(stone)
 
@@ -286,10 +302,8 @@ def nine_round(number_of_rounds):
         end_game(stone)
     return number_of_rounds
 
-while True: # game
+while True:
     stone = choose_stone()
-    print(stone)
-    print(type(number_of_rounds))
     game_mode()
 
     try:
@@ -326,7 +340,7 @@ while True: # game
                     x = won(won_list[i][0], won_list[i][1], won_list[i][2])
                     if x == '?':
                         break
-                nine_round += 1
+
                 stone = change_player(stone)
                 if nine_round >= len(list_num):
                     end_game(stone)
