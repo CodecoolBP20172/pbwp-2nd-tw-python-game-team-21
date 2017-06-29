@@ -2,24 +2,19 @@ import sys
 import os
 import random
 
-#global list_num
 list_num = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
 won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
             [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
             [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
             [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
-#num_players = None
 stone = 'X'
-#loop_break = True
 number_of_rounds = 0
 choose_stone = 1
 playerx = 0
 playero = 0
 tie = 0
-c = 0
+#c = 0
 aimove = 0
-list_active = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 center = None
 side = None
 corner = None
@@ -228,29 +223,19 @@ def center_move(x):
         return x
 def AI_move(x):
     loop_break = True
+    won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
+    [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
+    [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
+    [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
 
     while loop_break == True:
         for i in range(len(won_list)):
-            """
-            won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
-            [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
-            [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
-            [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
-            """
-
             x = win_move(won_list[i][0], won_list[i][1], won_list[i][2])
             if x != '*':
                 return x
+
         for a in range(len(won_list)):
-            """
-            won_list = [[list_num[0], list_num[1], list_num[2]], [list_num[3], list_num[4], list_num[5]],
-            [list_num[6], list_num[7], list_num[8]], [list_num[0], list_num[3], list_num[6]],
-            [list_num[1], list_num[4], list_num[7]], [list_num[2], list_num[5], list_num[8]],
-            [list_num[0], list_num[4], list_num[8]], [list_num[2], list_num[4], list_num[6]]]
-            """
-
             x = def_move(won_list[a][0], won_list[a][1], won_list[a][2])
-
             if x != '/':
                 return x
         x = center_move(x)
@@ -312,7 +297,8 @@ def restart_game(stone, game_transition):
     return
 
 def main():
-
-    game_mode(stone, game_transition)
-
+    try:
+        game_mode(stone, game_transition)
+    except KeyboardInterrupt:
+        pass
 main()
