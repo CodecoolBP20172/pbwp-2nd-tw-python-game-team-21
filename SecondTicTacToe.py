@@ -62,7 +62,7 @@ def best_of_game(best_of_something, game_transition):
         best_of_something = '10000'
     if best_of_something in ['3', '5', '7']:
         print('Best of ' + best_of_something + '!')
-    if playero + playerx + tie == int(best_of_something) and playero = playerx:
+    if playero + playerx + tie == int(best_of_something) and playero == playerx:
         print('It is a tie! N - Back to menu, Q - Quit game')
     elif playero > ((int(best_of_something) - tie) / 2):
         print('Player O won! N - Back to menu, Q - Quit game')
