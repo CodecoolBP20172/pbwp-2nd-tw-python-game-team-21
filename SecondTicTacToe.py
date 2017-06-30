@@ -122,18 +122,15 @@ def player_turn(stone, game_transition, number_of_rounds, best_of_something):
         print_score()
         print(stone + ' is next!')
         create_board()
-        number_of_rounds = nine_round(number_of_rounds, stone, game_transition)
         try:
             while True:
                 step = int(input('Choose a place 1-9: '))
                 if step in list_num:
                     place = int(step) - 1
-                    if list_num[place] != 'X' or list_num[place] != 'O':
-                        print('Pick a free number')
-                        break
-            list_num[place] = stone
-            loop_break = won_check(loop_break, stone, game_transition)
-
+                    list_num[place] = stone
+                    number_of_rounds = nine_round(number_of_rounds, stone, game_transition)
+                    loop_break = won_check(loop_break, stone, game_transition)
+                    break
             stone = change_player(stone)
         except (ValueError, TypeError, IndexError):
             print("Please enter a valid number")
@@ -156,7 +153,6 @@ def won_check(loop_break, stone, game_transition):
 
 def two_player_mode(stone, number_of_rounds, list_num, game_transition, best_of_something):
     loop_break = True
-    print(number_of_rounds)
     while loop_break:
         os.system('clear')
         loop_break = player_turn(stone, game_transition, number_of_rounds, best_of_something)
@@ -168,11 +164,8 @@ def one_player_turn(stone, game_transition, number_of_rounds):
             step = int(input('Choose a place 1-9: '))
             if step in list_num:
                 place = int(step) - 1
-                if list_num[place] == 'X' or list_num[place] == 'O':
-                    print('Pick a free number')
-                else:
-                    list_num[place] = stone
-                    break
+                list_num[place] = stone
+                break
         except (ValueError, TypeError, IndexError):
             print("Please enter a valid number")
 
